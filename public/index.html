@@ -33,6 +33,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(5,10,15,.97);backdrop-f
 .market-bar{position:relative;z-index:1;padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow-x:auto;scrollbar-width:none;}
 .market-bar::-webkit-scrollbar{display:none;}
 .market-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;flex-shrink:0;}
+#market-search{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11px;padding:4px 10px;border-radius:4px;width:110px;outline:none;flex-shrink:0;}
+#market-search:focus{border-color:var(--accent);}
+#market-search::placeholder{color:var(--muted);}
 #market-chips{display:flex;gap:5px;align-items:center;}
 .market-chip{padding:5px 11px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'Space Mono',monospace;font-size:11px;transition:all .15s;white-space:nowrap;flex-shrink:0;}
 .market-chip:hover{border-color:var(--accent);color:var(--accent);}
@@ -182,6 +185,7 @@ footer a{color:var(--accent);text-decoration:none;}
 
 <div class="market-bar">
   <div class="market-label">Market</div>
+  <input id="market-search" type="text" placeholder="Search..." oninput="filterMarkets(this.value)" autocomplete="off"/>
   <div id="market-chips"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 
@@ -191,7 +195,7 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="card ob-card">
     <div class="card-header">
       <span class="card-title">Orderbook Heatmap</span>
-      <span class="badge badge-green" id="ob-badge">â— Live</span>
+      <span class="badge badge-green" id="ob-badge">Live</span>
     </div>
     <div class="ob-inner">
       <div class="ob-col-hdr">
@@ -283,7 +287,7 @@ footer a{color:var(--accent);text-decoration:none;}
     <div class="card">
       <div class="card-header">
         <span class="card-title">Live Trades</span>
-        <span class="badge badge-green" id="trades-badge">â— Streaming</span>
+        <span class="badge badge-green" id="trades-badge">Streaming</span>
       </div>
       <div class="scrollable" id="trades-list">
         <div class="loading"><div class="spinner"></div></div>
@@ -476,16 +480,16 @@ function updateImb(bv,av){
   document.getElementById('bar-ask').style.width=apct+'%';
 
   let sig,col,pills;
-  if(ratio>20){sig='â¬† Strong Buy Pressure';col='var(--bid)';pills=[{l:'Bid Dominant',c:'pill-bull'},{l:'Buy Pressure',c:'pill-bull'}];}
-  else if(ratio>8){sig='â†— Mild Buy Pressure';col='var(--bid)';pills=[{l:'Bid Skew',c:'pill-bull'}];}
-  else if(ratio<-20){sig='â¬‡ Strong Sell Pressure';col='var(--ask)';pills=[{l:'Ask Dominant',c:'pill-bear'},{l:'Sell Pressure',c:'pill-bear'}];}
-  else if(ratio<-8){sig='â†˜ Mild Sell Pressure';col='var(--ask)';pills=[{l:'Ask Skew',c:'pill-bear'}];}
-  else{sig='â†’ Balanced Book';col='var(--warn)';pills=[{l:'Balanced',c:'pill-neu'}];}
+  if(ratio>20){sig='Strong Buy Pressure';col='var(--bid)';pills=[{l:'Bid Dominant',c:'pill-bull'},{l:'Buy Pressure',c:'pill-bull'}];}
+  else if(ratio>8){sig='Mild Buy Pressure';col='var(--bid)';pills=[{l:'Bid Skew',c:'pill-bull'}];}
+  else if(ratio<-20){sig='Strong Sell Pressure';col='var(--ask)';pills=[{l:'Ask Dominant',c:'pill-bear'},{l:'Sell Pressure',c:'pill-bear'}];}
+  else if(ratio<-8){sig='Mild Sell Pressure';col='var(--ask)';pills=[{l:'Ask Skew',c:'pill-bear'}];}
+  else{sig='Balanced Book';col='var(--warn)';pills=[{l:'Balanced',c:'pill-neu'}];}
 
   document.getElementById('imb-sig').textContent=sig;
   document.getElementById('imb-sig').style.color=col;
   document.getElementById('imb-pct').style.color=col;
-  document.getElementById('imb-badge').textContent=sig.replace(/[â¬†â¬‡â†—â†˜â†’] /,'');
+  document.getElementById('imb-badge').textContent=sig.replace(/^[A-Z]/,'');
   document.getElementById('pills').innerHTML=pills.map(p=>`<div class="pill ${p.c}">${p.l}</div>`).join('');
 }
 
@@ -582,25 +586,33 @@ function selectMarket(sym){
 }
 
 // â”€â”€â”€ MARKETS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let allMarkets = [];
+function renderChips(list){
+  document.getElementById('market-chips').innerHTML=list.map(s=>
+    `<div class="market-chip${s===market?' active':''}" data-sym="${s}" onclick="selectMarket('${s}')">${s}</div>`
+  ).join('');
+}
+function filterMarkets(q){
+  q=q.trim().toUpperCase();
+  const filtered = q ? allMarkets.filter(s=>s.includes(q)) : allMarkets.slice(0,12);
+  renderChips(filtered);
+}
 async function loadMarkets(){
   try{
     const d=await get('/api/v1/info');
     const ms=d.data||[];
-    const pri=['BTC','ETH','SOL','BNB','AVAX','DOGE','ARB','OP','APT','SUI','LINK','TIA','PEPE','WIF','NEAR','INJ'];
+    const pri=['BTC','ETH','SOL','BNB','AVAX','DOGE','ARB','OP','SUI','LINK','TRUMP','XPL'];
     const sorted=[...ms].sort((a,b)=>{
       const ai=pri.indexOf(a.symbol),bi=pri.indexOf(b.symbol);
       if(ai!==-1&&bi!==-1) return ai-bi;
       if(ai!==-1) return -1; if(bi!==-1) return 1;
       return a.symbol.localeCompare(b.symbol);
     });
-    document.getElementById('market-chips').innerHTML=sorted.map(m=>
-      `<div class="market-chip${m.symbol===market?' active':''}" data-sym="${m.symbol}" onclick="selectMarket('${m.symbol}')">${m.symbol}</div>`
-    ).join('');
+    allMarkets = sorted.map(m=>m.symbol);
+    renderChips(allMarkets.slice(0,12));
   }catch(e){
-    const fb=['BTC','ETH','SOL','BNB','AVAX','DOGE','ARB','OP'];
-    document.getElementById('market-chips').innerHTML=fb.map(s=>
-      `<div class="market-chip${s===market?' active':''}" data-sym="${s}" onclick="selectMarket('${s}')">${s}</div>`
-    ).join('');
+    allMarkets=['BTC','ETH','SOL','BNB','AVAX','DOGE','ARB','OP','SUI','LINK','TRUMP','XPL'];
+    renderChips(allMarkets.slice(0,12));
   }
 }
 
