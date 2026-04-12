@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pacifica Intelligence â€” Live Market Dashboard</title>
+<title>Pacifica Intelligence — Live Market Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -158,7 +158,6 @@ footer{position:relative;z-index:1;padding:11px 20px;border-top:1px solid var(--
 footer span{font-size:11px;color:var(--muted);}
 footer a{color:var(--accent);text-decoration:none;}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -174,10 +173,10 @@ footer a{color:var(--accent);text-decoration:none;}
     </div>
     <div class="ws-status">
       <div class="ws-dot connecting" id="ws-dot"></div>
-      <span id="ws-label">Connectingâ€¦</span>
+      <span id="ws-label">Connecting…</span>
     </div>
   </div>
-  <span id="clock">â€”</span>
+  <span id="clock">—</span>
 </header>
 
 <div class="market-bar">
@@ -191,7 +190,7 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="card ob-card">
     <div class="card-header">
       <span class="card-title">Orderbook Heatmap</span>
-      <span class="badge badge-green" id="ob-badge">â— Live</span>
+      <span class="badge badge-green" id="ob-badge">● Live</span>
     </div>
     <div class="ob-inner">
       <div class="ob-col-hdr">
@@ -207,18 +206,18 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="card price-hero">
     <div class="card-header">
       <span class="card-title" id="hero-title">Select a market</span>
-      <span class="badge badge-dim" id="chg-badge">â€”</span>
+      <span class="badge badge-dim" id="chg-badge">—</span>
     </div>
     <div class="price-hero-inner">
       <div class="price-main">
-        <div class="price-sym-label" id="sym-label">â€”</div>
-        <div class="price-big" id="price-big">â€”</div>
+        <div class="price-sym-label" id="sym-label">—</div>
+        <div class="price-big" id="price-big">—</div>
       </div>
       <div class="price-meta">
-        <div class="meta-item"><div class="meta-label">Mark</div><div class="meta-val" id="m-mark">â€”</div></div>
-        <div class="meta-item"><div class="meta-label">24h Change</div><div class="meta-val" id="m-chg">â€”</div></div>
-        <div class="meta-item"><div class="meta-label">24h Volume</div><div class="meta-val" id="m-vol">â€”</div></div>
-        <div class="meta-item"><div class="meta-label">Open Interest</div><div class="meta-val" id="m-oi">â€”</div></div>
+        <div class="meta-item"><div class="meta-label">Mark</div><div class="meta-val" id="m-mark">—</div></div>
+        <div class="meta-item"><div class="meta-label">24h Change</div><div class="meta-val" id="m-chg">—</div></div>
+        <div class="meta-item"><div class="meta-label">24h Volume</div><div class="meta-val" id="m-vol">—</div></div>
+        <div class="meta-item"><div class="meta-label">Open Interest</div><div class="meta-val" id="m-oi">—</div></div>
       </div>
     </div>
   </div>
@@ -227,21 +226,21 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="card imb-card">
     <div class="card-header">
       <span class="card-title">Bid/Ask Imbalance</span>
-      <span class="badge badge-dim" id="imb-badge">â€”</span>
+      <span class="badge badge-dim" id="imb-badge">—</span>
     </div>
     <div class="imb-inner">
       <div class="imb-row">
         <div class="imb-side">
           <div class="imb-side-label">Bid Volume</div>
-          <div class="imb-vol" style="color:var(--bid)" id="bid-vol">â€”</div>
+          <div class="imb-vol" style="color:var(--bid)" id="bid-vol">—</div>
         </div>
         <div class="imb-center">
-          <div class="imb-pct" id="imb-pct">â€”</div>
-          <div class="imb-signal" id="imb-sig">Waitingâ€¦</div>
+          <div class="imb-pct" id="imb-pct">—</div>
+          <div class="imb-signal" id="imb-sig">Waiting…</div>
         </div>
         <div class="imb-side" style="text-align:right">
           <div class="imb-side-label">Ask Volume</div>
-          <div class="imb-vol" style="color:var(--ask)" id="ask-vol">â€”</div>
+          <div class="imb-vol" style="color:var(--ask)" id="ask-vol">—</div>
         </div>
       </div>
       <div class="bar-track">
@@ -283,7 +282,7 @@ footer a{color:var(--accent);text-decoration:none;}
     <div class="card">
       <div class="card-header">
         <span class="card-title">Live Trades</span>
-        <span class="badge badge-green" id="trades-badge">â— Streaming</span>
+        <span class="badge badge-green" id="trades-badge">● Streaming</span>
       </div>
       <div class="scrollable" id="trades-list">
         <div class="loading"><div class="spinner"></div></div>
@@ -293,10 +292,10 @@ footer a{color:var(--accent);text-decoration:none;}
     <div class="card">
       <div class="card-header"><span class="card-title">Market Stats</span></div>
       <div class="stat-tiles">
-        <div class="stat-tile"><div class="st-label">Funding</div><div class="st-val" id="s-fund">â€”</div><div class="st-sub">Current epoch</div></div>
-        <div class="stat-tile"><div class="st-label">Next Fund.</div><div class="st-val" id="s-nfund">â€”</div><div class="st-sub">Predicted</div></div>
-        <div class="stat-tile"><div class="st-label">Mid Price</div><div class="st-val" id="s-mid">â€”</div><div class="st-sub">Best bid/ask avg</div></div>
-        <div class="stat-tile"><div class="st-label">Oracle</div><div class="st-val" id="s-oracle">â€”</div><div class="st-sub">Index price</div></div>
+        <div class="stat-tile"><div class="st-label">Funding</div><div class="st-val" id="s-fund">—</div><div class="st-sub">Current epoch</div></div>
+        <div class="stat-tile"><div class="st-label">Next Fund.</div><div class="st-val" id="s-nfund">—</div><div class="st-sub">Predicted</div></div>
+        <div class="stat-tile"><div class="st-label">Mid Price</div><div class="st-val" id="s-mid">—</div><div class="st-sub">Best bid/ask avg</div></div>
+        <div class="stat-tile"><div class="st-label">Oracle</div><div class="st-val" id="s-oracle">—</div><div class="st-sub">Index price</div></div>
       </div>
     </div>
 
@@ -304,12 +303,12 @@ footer a{color:var(--accent);text-decoration:none;}
 </div>
 
 <footer>
-  <span>Built on <a href="https://pacifica.fi" target="_blank">Pacifica</a> perpetuals Â· Analytics &amp; Data Track Â· Hackathon 2026</span>
-  <span>WS: <a href="https://docs.pacifica.fi/api-documentation/api/websocket" target="_blank">wss://ws.pacifica.fi/ws</a> Â· REST: api.pacifica.fi</span>
+  <span>Built on <a href="https://pacifica.fi" target="_blank">Pacifica</a> perpetuals · Analytics &amp; Data Track · Hackathon 2026</span>
+  <span>WS: <a href="https://docs.pacifica.fi/api-documentation/api/websocket" target="_blank">wss://ws.pacifica.fi/ws</a> · REST: api.pacifica.fi</span>
 </footer>
 
 <script>
-// â”€â”€â”€ CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
 const NETS = {
   mainnet: { rest: 'https://api.pacifica.fi', ws: 'wss://ws.pacifica.fi/ws' },
   testnet: { rest: 'https://test-api.pacifica.fi', ws: 'wss://test-ws.pacifica.fi/ws' }
@@ -325,12 +324,12 @@ let chart = null;
 // WS
 let ws = null, wsPing = null, wsRecon = null;
 
-// â”€â”€â”€ CLOCK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CLOCK ───────────────────────────────────────────────────────────────────
 setInterval(() => {
   document.getElementById('clock').textContent = new Date().toUTCString().slice(17,25)+' UTC';
 }, 1000);
 
-// â”€â”€â”€ NET SWITCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── NET SWITCH ───────────────────────────────────────────────────────────────
 function switchNet(n) {
   NET = n;
   document.getElementById('btn-mainnet').classList.toggle('active', n==='mainnet');
@@ -341,8 +340,8 @@ function switchNet(n) {
   init();
 }
 
-// â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const REST = () => '';
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const REST = () => '/api/v1';
 const WSS  = () => NETS[NET].ws;
 
 async function get(path) {
@@ -351,14 +350,14 @@ async function get(path) {
   return r.json();
 }
 function fmt(n,d=2){
-  n=parseFloat(n); if(isNaN(n)) return 'â€”';
+  n=parseFloat(n); if(isNaN(n)) return '—';
   if(Math.abs(n)>=1e9) return (n/1e9).toFixed(d)+'B';
   if(Math.abs(n)>=1e6) return (n/1e6).toFixed(d)+'M';
   if(Math.abs(n)>=1e3) return (n/1e3).toFixed(d)+'K';
   return n.toFixed(d);
 }
 function fp(p){
-  const n=parseFloat(p); if(isNaN(n)) return 'â€”';
+  const n=parseFloat(p); if(isNaN(n)) return '—';
   if(n>=10000) return n.toLocaleString(undefined,{maximumFractionDigits:0});
   if(n>=100) return n.toFixed(2);
   if(n>=1) return n.toFixed(4);
@@ -370,11 +369,11 @@ function ago(ts){
   return Math.floor(s/3600)+'h';
 }
 
-// â”€â”€â”€ WS ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── WS ENGINE ───────────────────────────────────────────────────────────────
 function wsSetStatus(st){
   const d=document.getElementById('ws-dot'), l=document.getElementById('ws-label');
   d.className='ws-dot '+st;
-  l.textContent = st==='connected'?'Live':st==='connecting'?'Connectingâ€¦':'Disconnected';
+  l.textContent = st==='connected'?'Live':st==='connecting'?'Connecting…':'Disconnected';
 }
 function wsDestroy(){
   if(wsPing) clearInterval(wsPing);
@@ -412,7 +411,7 @@ function wsUnsub(source, extra={}){ wsSend({method:'unsubscribe',params:{source,
 function wsSubMarket(sym){ wsSub('book',{symbol:sym,agg_level:1}); wsSub('trades',{symbol:sym}); }
 function wsUnsubMarket(sym){ wsUnsub('book',{symbol:sym,agg_level:1}); wsUnsub('trades',{symbol:sym}); }
 
-// â”€â”€â”€ MSG HANDLER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── MSG HANDLER ─────────────────────────────────────────────────────────────
 function handleMsg(msg){
   if(!msg.channel || msg.data===undefined) return;
   switch(msg.channel){
@@ -431,7 +430,7 @@ function handleMsg(msg){
   }
 }
 
-// â”€â”€â”€ ORDERBOOK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── ORDERBOOK ───────────────────────────────────────────────────────────────
 function renderOB(book){
   const bids=(book.l[0]||[]).slice(0,10);
   const asks=(book.l[1]||[]).slice(0,10);
@@ -442,7 +441,7 @@ function renderOB(book){
 
   const bBid=bids.length?parseFloat(bids[0].p):0;
   const bAsk=asks.length?parseFloat(asks[0].p):0;
-  const sp=bAsk-bBid, spPct=bBid?(sp/bBid*100).toFixed(3):'â€”';
+  const sp=bAsk-bBid, spPct=bBid?(sp/bBid*100).toFixed(3):'—';
 
   const askH=ar.map(r=>{
     const w=(r.t/mx*100).toFixed(1);
@@ -476,20 +475,20 @@ function updateImb(bv,av){
   document.getElementById('bar-ask').style.width=apct+'%';
 
   let sig,col,pills;
-  if(ratio>20){sig='â¬† Strong Buy Pressure';col='var(--bid)';pills=[{l:'Bid Dominant',c:'pill-bull'},{l:'Buy Pressure',c:'pill-bull'}];}
-  else if(ratio>8){sig='â†— Mild Buy Pressure';col='var(--bid)';pills=[{l:'Bid Skew',c:'pill-bull'}];}
-  else if(ratio<-20){sig='â¬‡ Strong Sell Pressure';col='var(--ask)';pills=[{l:'Ask Dominant',c:'pill-bear'},{l:'Sell Pressure',c:'pill-bear'}];}
-  else if(ratio<-8){sig='â†˜ Mild Sell Pressure';col='var(--ask)';pills=[{l:'Ask Skew',c:'pill-bear'}];}
-  else{sig='â†’ Balanced Book';col='var(--warn)';pills=[{l:'Balanced',c:'pill-neu'}];}
+  if(ratio>20){sig='⬆ Strong Buy Pressure';col='var(--bid)';pills=[{l:'Bid Dominant',c:'pill-bull'},{l:'Buy Pressure',c:'pill-bull'}];}
+  else if(ratio>8){sig='↗ Mild Buy Pressure';col='var(--bid)';pills=[{l:'Bid Skew',c:'pill-bull'}];}
+  else if(ratio<-20){sig='⬇ Strong Sell Pressure';col='var(--ask)';pills=[{l:'Ask Dominant',c:'pill-bear'},{l:'Sell Pressure',c:'pill-bear'}];}
+  else if(ratio<-8){sig='↘ Mild Sell Pressure';col='var(--ask)';pills=[{l:'Ask Skew',c:'pill-bear'}];}
+  else{sig='→ Balanced Book';col='var(--warn)';pills=[{l:'Balanced',c:'pill-neu'}];}
 
   document.getElementById('imb-sig').textContent=sig;
   document.getElementById('imb-sig').style.color=col;
   document.getElementById('imb-pct').style.color=col;
-  document.getElementById('imb-badge').textContent=sig.replace(/[â¬†â¬‡â†—â†˜â†’] /,'');
+  document.getElementById('imb-badge').textContent=sig.replace(/[⬆⬇↗↘→] /,'');
   document.getElementById('pills').innerHTML=pills.map(p=>`<div class="pill ${p.c}">${p.l}</div>`).join('');
 }
 
-// â”€â”€â”€ LIVE TRADES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── LIVE TRADES ─────────────────────────────────────────────────────────────
 function ingestTrades(list){
   // WS trade fields: h,s,a,p,d,tc,t,li
   list.forEach(t=>{
@@ -507,11 +506,11 @@ function renderTrades(){
       <span class="tr-t">${ago(t.ts)}</span></div>`;
   }).join('');
   document.getElementById('trades-list').innerHTML=html||
-    '<div class="loading" style="padding:18px">Waiting for tradesâ€¦</div>';
+    '<div class="loading" style="padding:18px">Waiting for trades…</div>';
   tradesBuf.forEach(t=>t.fresh=false);
 }
 
-// â”€â”€â”€ PRICE HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PRICE HERO ───────────────────────────────────────────────────────────────
 function updateHero(sym){
   const p=allPrices.find(x=>x.symbol===sym); if(!p) return;
   const mk=parseFloat(p.mark), yt=parseFloat(p.yesterday_price);
@@ -550,7 +549,7 @@ function updateHero(sym){
   document.getElementById('s-oracle').textContent='$'+fp(p.oracle);
 }
 
-// â”€â”€â”€ FUNDING LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FUNDING LIST ─────────────────────────────────────────────────────────────
 function updateFunding(){
   if(!allPrices.length) return;
   const sorted=[...allPrices].sort((a,b)=>Math.abs(parseFloat(b.funding))-Math.abs(parseFloat(a.funding)));
@@ -565,7 +564,7 @@ function updateFunding(){
   }).join('');
 }
 
-// â”€â”€â”€ MARKET SELECT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── MARKET SELECT ────────────────────────────────────────────────────────────
 function selectMarket(sym){
   if(sym===market) return;
   const prev=market; market=sym;
@@ -581,7 +580,7 @@ function selectMarket(sym){
   restSeedOB(); restSeedTrades();
 }
 
-// â”€â”€â”€ MARKETS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── MARKETS ──────────────────────────────────────────────────────────────────
 async function loadMarkets(){
   try{
     const d=await get('/api/v1/info');
@@ -604,7 +603,7 @@ async function loadMarkets(){
   }
 }
 
-// â”€â”€â”€ REST SEEDS (fast first frame, WS takes over) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── REST SEEDS (fast first frame, WS takes over) ────────────────────────────
 async function restSeedPrices(){
   try{
     const d=await get('/api/v1/info/prices');
@@ -629,11 +628,11 @@ async function restSeedTrades(){
   }catch(e){document.getElementById('trades-list').innerHTML=`<div class="err">${e.message}</div>`;}
 }
 
-// â”€â”€â”€ CHART â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CHART ────────────────────────────────────────────────────────────────────
 async function loadChart(){
   try{
     const IMS={1:60000,'1m':60000,'3m':180000,'5m':300000,'15m':900000,'30m':1800000,'1h':3600000,'2h':7200000,'4h':14400000};
-    const ms=IMS[interval]||60000, end=Date.now(), candleCount={'1m':60,'3m':60,'5m':60,'15m':48,'30m':48,'1h':48,'2h':36,'4h':30}[interval]||60, start=end-ms*candleCount;
+    const ms=IMS[interval]||60000, end=Date.now(), start=end-ms*80;
     const d=await get(`/api/v1/kline?symbol=${market}&interval=${interval}&start_time=${start}&end_time=${end}`);
     const candles=(d.data||[]).reverse();
     if(!candles.length) return;
@@ -651,7 +650,11 @@ async function loadChart(){
       chart.data.datasets[0].borderColor=lc; chart.data.datasets[0].backgroundColor=fc;
       chart.update('none'); return; }
 
-
+    if(!window.Chart) await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+      s.onload=res; s.onerror=rej; document.head.appendChild(s);
+    });
 
     chart=new Chart(ctx,{
       type:'line',
@@ -677,7 +680,7 @@ function changeInterval(iv, btn){
   loadChart();
 }
 
-// â”€â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 async function init(){
   await loadMarkets();
   await Promise.allSettled([restSeedPrices(), restSeedOB(), restSeedTrades()]);
