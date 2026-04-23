@@ -1,7 +1,3 @@
-// api/proxy.js
-// Vercel Serverless Function — proxies all Pacifica REST calls
-// Browser hits /api/v1/info → this forwards to https://api.pacifica.fi/api/v1/info
-
 const https = require('https');
 
 const PACIFICA_BASE = process.env.USE_TESTNET === 'true'
@@ -9,40 +5,45 @@ const PACIFICA_BASE = process.env.USE_TESTNET === 'true'
   : 'https://api.pacifica.fi';
 
 module.exports = async (req, res) => {
-  // CORS — allow browser to call this from any origin
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
-  // Reconstruct the Pacifica path from the captured route param + query string
-  const path = req.query.path || '';
-  const qs   = new URLSearchParams(req.query);
+  const pathSegment = Array.isArray(req.query.path)
+    ? req.query.path.join('/')
+    : (req.query.path || '');
+
+  const qs = new URLSearchParams(req.query);
   qs.delete('path');
   const queryString = qs.toString();
-  const upstreamUrl = `${PACIFICA_BASE}/api/v1/${path}${queryString ? '?' + queryString : ''}`;
+
+  const upstreamHost = PACIFICA_BASE.replace('https://', '');
+  const upstreamPath = `/api/v1/${pathSegment}${queryString ? '?' + queryString : ''}`;
 
   return new Promise((resolve) => {
-    const options = new URL(upstreamUrl);
-    const proxyReq = https.get({
-      hostname: options.hostname,
-      path:     options.pathname + options.search,
+    const isPost = req.method === 'POST';
+    const body = isPost ? JSON.stringify(req.body || {}) : null;
+
+    const options = {
+      hostname: upstreamHost,
+      path: upstreamPath,
+      method: req.method,
       headers: {
-        'Accept':     'application/json',
-        'User-Agent': 'PacificaIntelligence/1.0'
+        'Accept': 'application/json',
+        'User-Agent': 'PacificaIntelligence/1.0',
+        ...(isPost && { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }),
       },
-      timeout: 9000
-    }, (proxyRes) => {
+      timeout: 9000,
+    };
+
+    const proxyReq = https.request(options, (proxyRes) => {
       const chunks = [];
       proxyRes.on('data', d => chunks.push(d));
       proxyRes.on('end', () => {
-        const body = Buffer.concat(chunks).toString();
         res.setHeader('Content-Type', 'application/json');
-        res.status(proxyRes.statusCode).send(body);
+        res.status(proxyRes.statusCode).send(Buffer.concat(chunks).toString());
         resolve();
       });
     });
@@ -57,5 +58,8 @@ module.exports = async (req, res) => {
       res.status(504).json({ success: false, error: 'timeout' });
       resolve();
     });
+
+    if (isPost && body) proxyReq.write(body);
+    proxyReq.end();
   });
 };
