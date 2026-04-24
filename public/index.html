@@ -160,7 +160,7 @@ canvas{width:100%!important;}
 
 
 
-.scanner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;}
+
 .scanner-item{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;cursor:pointer;transition:all .15s;}
 .scanner-item:hover{border-color:var(--accent);}
 .scanner-item.bull{border-color:rgba(0,212,160,.4);background:rgba(0,212,160,.05);}
@@ -404,30 +404,19 @@ footer a{color:var(--accent);text-decoration:none;}
 <div style="position:relative;z-index:1;padding:0 20px 14px;max-width:1700px;margin:0 auto;">
   <div class="card">
     <div class="ch">
-      <span class="ch-title">Market Imbalance Scanner</span>
-      <span class="badge blue" id="scan-badge">All Markets</span>
+      <span class="ch-title">Imbalance Scanner</span>
+      <div style="display:flex;gap:4px">
+        <button class="scanner-filter-btn active" onclick="setScanFilter('all',this)">All</button>
+        <button class="scanner-filter-btn" onclick="setScanFilter('bull',this)">Bull</button>
+        <button class="scanner-filter-btn" onclick="setScanFilter('bear',this)">Bear</button>
+      </div>
     </div>
-    <div class="scanner-grid" id="scanner-grid">
+    <div class="scanner-grid" id="scanner-grid" style="max-height:220px;overflow-y:auto;">
       <div class="loading"><div class="spin"></div></div>
     </div>
   </div>
 </div>
 
-
-<!-- IMBALANCE SCANNER -->
-<div class="scanner-panel">
-  <div class="scanner-header">
-    <span class="scanner-title">Multi-Market Imbalance Scanner</span>
-    <div class="scanner-filter">
-      <button class="scanner-filter-btn active" onclick="setScanFilter('all',this)">All</button>
-      <button class="scanner-filter-btn" onclick="setScanFilter('bull',this)">Bullish</button>
-      <button class="scanner-filter-btn" onclick="setScanFilter('bear',this)">Bearish</button>
-    </div>
-  </div>
-  <div class="scanner-grid" id="scanner-grid">
-    <div class="loading"><div class="spin"></div></div>
-  </div>
-</div>
 
 <footer>
   <span>Built on <a href="https://pacifica.fi" target="_blank">Pacifica</a> perpetuals Â· Analytics &amp; Data Track Â· Hackathon 2026</span>
