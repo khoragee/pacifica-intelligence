@@ -158,6 +158,19 @@ canvas{width:100%!important;}
 .err{padding:13px;color:var(--ask);font-size:11px;text-align:center;line-height:1.6;}
 
 
+
+
+.scanner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px;}
+.scanner-item{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px;cursor:pointer;transition:all .15s;}
+.scanner-item:hover{border-color:var(--accent);}
+.scanner-item.bull{border-color:rgba(0,212,160,.4);background:rgba(0,212,160,.05);}
+.scanner-item.bear{border-color:rgba(255,56,96,.4);background:rgba(255,56,96,.05);}
+.scan-sym{font-size:11px;font-weight:700;margin-bottom:3px;}
+.scan-pct{font-size:13px;font-weight:800;font-family:'Syne',sans-serif;}
+.scan-pct.bull{color:var(--bid);}
+.scan-pct.bear{color:var(--ask);}
+.scan-pct.neut{color:var(--muted);}
+
 /* WALLET & TRADE PANEL */
 .wallet-btn{padding:5px 14px;border-radius:5px;border:1.5px solid var(--accent);background:rgba(0,229,180,.08);color:var(--accent);font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .wallet-btn:hover{background:rgba(0,229,180,.18);}
@@ -186,6 +199,25 @@ canvas{width:100%!important;}
 .trade-msg.ok{color:var(--bid);background:rgba(0,229,180,.08);border:1px solid rgba(0,229,180,.2);}
 .trade-msg.err{color:var(--ask);background:rgba(255,61,113,.08);border:1px solid rgba(255,61,113,.2);}
 .trade-msg.info{color:var(--warn);background:rgba(255,170,0,.08);border:1px solid rgba(255,170,0,.2);}
+
+
+/* IMBALANCE SCANNER */
+.scanner-panel{position:relative;z-index:1;padding:0 20px 14px;max-width:1700px;margin:0 auto;}
+.scanner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px;}
+.scanner-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;cursor:pointer;transition:all .15s;}
+.scanner-item:hover{border-color:var(--accent);transform:translateY(-1px);}
+.scanner-item.bull{border-color:rgba(0,212,160,.3);background:rgba(0,212,160,.04);}
+.scanner-item.bear{border-color:rgba(255,56,96,.3);background:rgba(255,56,96,.04);}
+.scanner-sym{font-size:12px;font-weight:700;margin-bottom:4px;}
+.scanner-pct{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;}
+.scanner-sig{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:2px;}
+.scanner-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden;}
+.scanner-bar-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+.scanner-header{display:flex;align-items:center;justify-content:space-between;}
+.scanner-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);}
+.scanner-filter{display:flex;gap:6px;}
+.scanner-filter-btn{padding:3px 9px;border-radius:3px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'Space Mono',monospace;font-size:9.5px;cursor:pointer;transition:all .15s;}
+.scanner-filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,160,.08);}
 
 footer{position:relative;z-index:1;padding:11px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
 footer span{font-size:11px;color:var(--muted);}
@@ -365,6 +397,35 @@ footer a{color:var(--accent);text-decoration:none;}
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- IMBALANCE SCANNER -->
+<div style="position:relative;z-index:1;padding:0 20px 14px;max-width:1700px;margin:0 auto;">
+  <div class="card">
+    <div class="ch">
+      <span class="ch-title">Market Imbalance Scanner</span>
+      <span class="badge blue" id="scan-badge">All Markets</span>
+    </div>
+    <div class="scanner-grid" id="scanner-grid">
+      <div class="loading"><div class="spin"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- IMBALANCE SCANNER -->
+<div class="scanner-panel">
+  <div class="scanner-header">
+    <span class="scanner-title">Multi-Market Imbalance Scanner</span>
+    <div class="scanner-filter">
+      <button class="scanner-filter-btn active" onclick="setScanFilter('all',this)">All</button>
+      <button class="scanner-filter-btn" onclick="setScanFilter('bull',this)">Bullish</button>
+      <button class="scanner-filter-btn" onclick="setScanFilter('bear',this)">Bearish</button>
+    </div>
+  </div>
+  <div class="scanner-grid" id="scanner-grid">
+    <div class="loading"><div class="spin"></div></div>
   </div>
 </div>
 
@@ -993,6 +1054,110 @@ if (_origSelect) {
     setOrderType(orderType);
   };
 }
+
+
+// IMBALANCE SCANNER
+let scannerData = {};
+
+async function updateScanner() {
+  if (!allPrices.length) return;
+  // For each market in prices, fetch orderbook and calculate imbalance
+  // Only scan top 12 to avoid rate limiting
+  const top12 = allPrices.slice(0, 12);
+  const results = [];
+
+  await Promise.allSettled(top12.map(async p => {
+    try {
+      const d = await get('/api/v1/book?symbol=' + p.symbol);
+      if (!d.data) return;
+      const bids = d.data.l[0] || [];
+      const asks = d.data.l[1] || [];
+      const bv = bids.slice(0,10).reduce((s,r) => s + parseFloat(r.a), 0);
+      const av = asks.slice(0,10).reduce((s,r) => s + parseFloat(r.a), 0);
+      const tot = bv + av;
+      const ratio = tot ? (bv - av) / tot * 100 : 0;
+      results.push({ sym: p.symbol, ratio, price: p.mark });
+    } catch(e) {}
+  }));
+
+  results.sort((a,b) => Math.abs(b.ratio) - Math.abs(a.ratio));
+
+  const grid = document.getElementById('scanner-grid');
+  if (!grid) return;
+
+  grid.innerHTML = results.map(r => {
+    const cls = r.ratio > 8 ? 'bull' : r.ratio < -8 ? 'bear' : '';
+    const pctCls = r.ratio > 8 ? 'bull' : r.ratio < -8 ? 'bear' : 'neut';
+    const sign = r.ratio > 0 ? '+' : '';
+    return '<div class="scanner-item ' + cls + '" onclick="selectMarket('' + r.sym + '')">' +
+      '<div class="scan-sym">' + r.sym + '</div>' +
+      '<div class="scan-pct ' + pctCls + '">' + sign + r.ratio.toFixed(1) + '%</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('scan-badge').textContent = results.length + ' Markets';
+}
+
+// Run scanner every 15 seconds
+setInterval(updateScanner, 15000);
+setTimeout(updateScanner, 3000); // first run after 3s
+
+
+// â”€â”€ IMBALANCE SCANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let scanFilter = 'all';
+let scannerData = {}; // sym -> {bidVol, askVol, ratio}
+
+function setScanFilter(f, btn) {
+  scanFilter = f;
+  document.querySelectorAll('.scanner-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderScanner();
+}
+
+function updateScannerData(sym, bidVol, askVol) {
+  const tot = bidVol + askVol;
+  if (!tot) return;
+  const ratio = (bidVol - askVol) / tot * 100;
+  scannerData[sym] = { bidVol, askVol, ratio };
+  renderScanner();
+}
+
+function renderScanner() {
+  const grid = document.getElementById('scanner-grid');
+  if (!grid) return;
+
+  let items = Object.entries(scannerData);
+  if (scanFilter === 'bull') items = items.filter(([,d]) => d.ratio > 5);
+  if (scanFilter === 'bear') items = items.filter(([,d]) => d.ratio < -5);
+
+  // Sort by absolute ratio descending
+  items.sort((a, b) => Math.abs(b[1].ratio) - Math.abs(a[1].ratio));
+
+  if (!items.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:12px;">No data yet â€” watching markets...</div>';
+    return;
+  }
+
+  grid.innerHTML = items.map(([sym, d]) => {
+    const ratio = d.ratio;
+    const isPos = ratio > 0;
+    const col = ratio > 10 ? 'var(--bid)' : ratio < -10 ? 'var(--ask)' : 'var(--warn)';
+    const cls = ratio > 5 ? 'bull' : ratio < -5 ? 'bear' : '';
+    const barW = Math.min(Math.abs(ratio) * 2, 100).toFixed(0);
+    const barCol = isPos ? 'var(--bid)' : 'var(--ask)';
+    let sig = ratio > 15 ? 'Strong Buy' : ratio > 5 ? 'Mild Buy' : ratio < -15 ? 'Strong Sell' : ratio < -5 ? 'Mild Sell' : 'Balanced';
+
+    return `<div class="scanner-item ${cls}" onclick="switchSym && switchSym('${sym}') || selectMarket('${sym}')">
+      <div class="scanner-sym">${sym}</div>
+      <div class="scanner-pct" style="color:${col}">${isPos ? '+' : ''}${ratio.toFixed(1)}%</div>
+      <div class="scanner-sig">${sig}</div>
+      <div class="scanner-bar"><div class="scanner-bar-fill" style="width:${barW}%;background:${barCol}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// Hook into WS orderbook messages to feed scanner
+const _origRoute = typeof route === 'function' ? route : null;
 
 </script>
 </body>
