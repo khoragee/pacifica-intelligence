@@ -457,8 +457,8 @@ setInterval(() => {
 // ─── NETWORK SWITCH ──────────────────────────────────────────────────────────
 function switchNet(testnet) {
   NET = testnet ? 'testnet' : 'mainnet';
-  document.getElementById('btn-main').classList.toggle('active', !testnet);
-  document.getElementById('btn-test').classList.toggle('active', testnet);
+  document.getElementById('btn-mainnet').classList.toggle('active', !testnet);
+  document.getElementById('btn-testnet').classList.toggle('active', testnet);
   wsReconnect();
 }
 
@@ -513,12 +513,12 @@ function wsSend(obj) {
 
 function wsSubMarket(s) {
   wsSend({ method: 'subscribe', params: { source: 'book', symbol: s, agg_level: 1 } });
-  wsSend({ method: 'subscribe', params: { source: 'trades', symbol: s } });
+  wsSend({ method: 'subscribe', params: { source: 'trades-list', symbol: s } });
 }
 
 function wsUnsubMarket(s) {
   wsSend({ method: 'unsubscribe', params: { source: 'book', symbol: s } });
-  wsSend({ method: 'unsubscribe', params: { source: 'trades', symbol: s } });
+  wsSend({ method: 'unsubscribe', params: { source: 'trades-list', symbol: s } });
 }
 
 function wsSetStatus(state, label) {
@@ -557,7 +557,7 @@ function handleMsg(msg) {
     return;
   }
 
-  if (ch === 'trades' && msg.data) {
+  if (ch === 'trades-list' && msg.data) {
     const fresh = msg.data.filter(t => !t.s || t.s === market);
     if (fresh.length) {
       tradesBuf = [...fresh, ...tradesBuf].slice(0, MAX_TRADES);
@@ -651,8 +651,8 @@ function updateHero() {
   const chg = yest ? (mark - yest) / yest * 100 : 0;
   const up = chg >= 0;
 
-  const heroSym = document.getElementById('hero-sym');
-  const heroPrice = document.getElementById('hero-price');
+  const heroSym = document.getElementById('sym-label');
+  const heroPrice = document.getElementById('price-big');
   const chgBadge = document.getElementById('chg-badge');
   const mMark = document.getElementById('m-mark');
   const mChg = document.getElementById('m-chg');
@@ -681,13 +681,13 @@ function updateHero() {
   // Hero title
   const ht = document.getElementById('hero-title');
   if (ht) ht.textContent = market + '-PERP';
-  const heroChgBadge = document.getElementById('hero-chg');
+  const heroChgBadge = document.getElementById('chg-badge');
   if (heroChgBadge) { heroChgBadge.textContent = (up ? '+' : '') + chg.toFixed(2) + '%'; heroChgBadge.className = 'chg-badge ' + (up ? 'up' : 'dn'); }
 }
 
 // ─── FUNDING RATES ───────────────────────────────────────────────────────────
 function updateFunding() {
-  const el = document.getElementById('funding-list');
+  const el = document.getElementById('fund-list');
   if (!el || !allPrices.length) return;
   const sorted = [...allPrices].sort((a, b) => Math.abs(parseFloat(b.funding)) - Math.abs(parseFloat(a.funding)));
   el.innerHTML = sorted.slice(0, 25).map(p => {
@@ -739,12 +739,12 @@ function renderOB(data) {
 function updateImb(bv, av) {
   const tot = bv + av; if (!tot) return;
   const ratio = (bv - av) / tot * 100;
-  const iBid = document.getElementById('i-bid');
-  const iAsk = document.getElementById('i-ask');
-  const iPct = document.getElementById('i-pct');
-  const bBid = document.getElementById('b-bid');
-  const bAsk = document.getElementById('b-ask');
-  const iSig = document.getElementById('i-sig');
+  const iBid = document.getElementById('bid-vol');
+  const iAsk = document.getElementById('ask-vol');
+  const iPct = document.getElementById('imb-pct');
+  const bBid = document.getElementById('bar-bid');
+  const bAsk = document.getElementById('bar-ask');
+  const iSig = document.getElementById('imb-sig');
   const imbBadge = document.getElementById('imb-badge');
   const pills = document.getElementById('pills');
 
